@@ -1,9 +1,14 @@
 FROM python:3.8-slim-buster
+
+# Set the working directory
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+# Copy and install dependencies
+COPY requirements.txt /app/requirements.txt
 RUN pip3 install -r requirements.txt
 
-COPY . .
+# Copy all the application files
+COPY . /app
 
-CMD python3 main.py
+# Set the default command to run the application
+CMD ["python3", "main.py"]
