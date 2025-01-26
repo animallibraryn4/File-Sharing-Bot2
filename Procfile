@@ -1,5 +1,2 @@
-worker: python3 main.py
-git add Procfile
-git commit -m "Add Procfile"
-git push
-web: python app.py
+web: python main.py
+worker: python main.py
