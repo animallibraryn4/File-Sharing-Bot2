@@ -42,7 +42,7 @@ except ValueError:
 
 
 
-CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "@animelibraryn4")
+CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "📀")
 
 PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False
 
@@ -95,8 +95,3 @@ def LOGGER(name: str) -> logging.Logger:
 
 
 
-# Jishu Developer 
-# Don't Remove Credit 🥺
-# Telegram Channel @Madflix_Bots
-# Backup Channel @JishuBotz
-# Developer @JishuDeveloper
