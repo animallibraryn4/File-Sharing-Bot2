@@ -15,6 +15,11 @@ CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002263636517"))
 
 FORCE_SUB_CHANNELS = []  # Initialize an empty list for channels
 
+# Fetch the force sub channels when the bot starts
+async def initialize_force_sub_channels():
+    global FORCE_SUB_CHANNELS
+    FORCE_SUB_CHANNELS = await fetch_force_sub_channels()  # Update FORCE_SUB_CHANNELS
+
 PORT = os.environ.get("PORT", "8080")
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
 
@@ -27,7 +32,7 @@ except ValueError:
     raise Exception("Your Admins list does not contain valid integers.")
 
 # Other config options...
-FILE_AUTO_DELETE = int(os.getenv("FILE_AUTO_DELETE", "600")) # auto delete in minutes
+FILE_AUTO_DELETE = int(os.getenv("FILE_AUTO_DELETE", "600"))  # auto delete in minutes
 
 LOG_FILE_NAME = "filesharingbot.txt"
 
