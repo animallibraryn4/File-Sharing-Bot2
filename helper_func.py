@@ -3,30 +3,33 @@ import re
 import asyncio
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
-from config import FORCE_SUB_CHANNEL, ADMINS
+from config import FORCE_SUB_CHANNELS, ADMINS  # Corrected import to use the list
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.errors import FloodWait
 
 
-
-
+# Check if the user is subscribed to any of the FORCE_SUB_CHANNELS
 async def is_subscribed(filter, client, update):
-    if not FORCE_SUB_CHANNEL:
+    if not FORCE_SUB_CHANNELS:
         return True
     user_id = update.from_user.id
     if user_id in ADMINS:
         return True
-    try:
-        member = await client.get_chat_member(chat_id = FORCE_SUB_CHANNEL, user_id = user_id)
-    except UserNotParticipant:
-        return False
+    
+    # Iterate through all force sub channels and check if the user is a member
+    for channel in FORCE_SUB_CHANNELS:
+        try:
+            member = await client.get_chat_member(chat_id=channel, user_id=user_id)
+        except UserNotParticipant:
+            continue  # User is not a member of this channel, continue to check other channels
 
-    if not member.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.MEMBER]:
-        return False
-    else:
-        return True 
+        if member.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.MEMBER]:
+            return True
+    
+    return False
 
 
+# Base64 encode a string
 async def encode(string):
     string_bytes = string.encode("ascii")
     base64_bytes = base64.urlsafe_b64encode(string_bytes)
@@ -34,14 +37,16 @@ async def encode(string):
     return base64_string
 
 
+# Base64 decode a string
 async def decode(base64_string):
-    base64_string = base64_string.strip("=") # links generated before this commit will be having = sign, hence striping them to handle padding errors.
+    base64_string = base64_string.strip("=")  # Handle padding issues
     base64_bytes = (base64_string + "=" * (-len(base64_string) % 4)).encode("ascii")
-    string_bytes = base64.urlsafe_b64decode(base64_bytes) 
+    string_bytes = base64.urlsafe_b64decode(base64_bytes)
     string = string_bytes.decode("ascii")
     return string
 
 
+# Get a list of messages from the database channel
 async def get_messages(client, message_ids):
     messages = []
     total_messages = 0
@@ -65,6 +70,7 @@ async def get_messages(client, message_ids):
     return messages
 
 
+# Extract the message ID from the forwarded message or URL
 async def get_message_id(client, message):
     if message.forward_from_chat:
         if message.forward_from_chat.id == client.db_channel.id:
@@ -75,7 +81,7 @@ async def get_message_id(client, message):
         return 0
     elif message.text:
         pattern = "https://t.me/(?:c/)?(.*)/(\d+)"
-        matches = re.match(pattern,message.text)
+        matches = re.match(pattern, message.text)
         if not matches:
             return 0
         channel_id = matches.group(1)
@@ -90,6 +96,7 @@ async def get_message_id(client, message):
         return 0
 
 
+# Convert seconds to a readable time format
 def get_readable_time(seconds: int) -> str:
     count = 0
     up_time = ""
@@ -112,15 +119,5 @@ def get_readable_time(seconds: int) -> str:
     return up_time
 
 
+# Custom filter for checking if the user is subscribed
 subscribed = filters.create(is_subscribed)
-       
-
-
-
-
-
-# Jishu Developer 
-# Don't Remove Credit 🥺
-# Telegram Channel @Madflix_Bots
-# Backup Channel @JishuBotz
-# Developer @JishuDeveloper
