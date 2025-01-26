@@ -13,8 +13,21 @@ DB_NAME = os.environ.get("DB_NAME", "n4animeedit")
 
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002263636517"))
 
-# config.py
-FORCE_SUB_CHANNELS = ["@channel1", "@channel2", "@channel3"]
+ # Initialize the list of 3 channels
+FORCE_SUB_CHANNELS = ["@default_channel1", "@default_channel2", "@default_channel3"]
+
+def update_force_sub_channels(new_channels):
+    """
+    Dynamically update the list of force subscription channels.
+    new_channels should be a list of exactly 3 channels.
+    """
+    global FORCE_SUB_CHANNELS
+    
+    if len(new_channels) == 3:
+        FORCE_SUB_CHANNELS = new_channels
+        logging.info(f"Updated FORCE_SUB_CHANNELS to: {FORCE_SUB_CHANNELS}")
+    else:
+        logging.error("You must provide exactly 3 channels.")
 
 PORT = os.environ.get("PORT", "8080")
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
