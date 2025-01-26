@@ -41,14 +41,30 @@ def update_force_sub_channels(new_channels):
     else:
         logging.error("You must provide exactly 3 channels.")
 
-# Example method to add new channels dynamically (called by Telegram bot or other services)
-def add_new_channels(channel1, channel2, channel3):
+# Function to initialize the force subscription channels (default values or dynamically)
+def initialize_force_sub_channels():
     """
-    Add exactly 3 channels dynamically to FORCE_SUB_CHANNELS.
+    Initialize the FORCE_SUB_CHANNELS with default values or from an external source.
     """
-    update_force_sub_channels([channel1, channel2, channel3])
+    global FORCE_SUB_CHANNELS
+    
+    # Example: Load channels from a file if it exists, otherwise use default
+    file_path = "settings.txt"
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, "r") as file:
+                channels = file.read().splitlines()
+                if len(channels) == 3:
+                    FORCE_SUB_CHANNELS = channels
+                    LOGGER(__name__).info(f"Initialized FORCE_SUB_CHANNELS from file: {FORCE_SUB_CHANNELS}")
+                else:
+                    LOGGER(__name__).error("Settings file must contain exactly 3 channels.")
+        except Exception as e:
+            LOGGER(__name__).error(f"Error initializing FORCE_SUB_CHANNELS from file: {e}")
+    else:
+        LOGGER(__name__).info("Using default FORCE_SUB_CHANNELS.")
 
-# Example function to fetch the current force subscription channels
+# Example method to fetch the current force subscription channels
 def fetch_force_sub_channels():
     """
     Fetch the current list of force subscription channels.
@@ -63,9 +79,6 @@ OWNER_ID = int(os.environ.get("OWNER_ID", "5380609667"))
 DB_URL = os.environ.get("DB_URL", "mongodb+srv://n4animeedit:u80hdwhlka5NBFfY@cluster0.jowvb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 DB_NAME = os.environ.get("DB_NAME", "n4animeedit")
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002263636517"))
-
-# Initialize the list of 3 channels (could be dynamically changed as needed)
-FORCE_SUB_CHANNELS = ["@default_channel1", "@default_channel2", "@default_channel3"]
 
 # Set up other configuration options
 PORT = os.environ.get("PORT", "8080")
