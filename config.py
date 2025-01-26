@@ -1,6 +1,8 @@
 import os
 import logging
 from logging.handlers import RotatingFileHandler
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize the list of force subscription channels with default values
 FORCE_SUB_CHANNELS = ["@default_channel1", "@default_channel2", "@default_channel3"]
