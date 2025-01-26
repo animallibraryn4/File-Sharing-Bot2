@@ -5,12 +5,29 @@ from pyrogram import Client
 from pyrogram.enums import ParseMode
 import sys
 from datetime import datetime
-from config import API_HASH, API_ID, LOGGER, BOT_TOKEN, TG_BOT_WORKERS, FORCE_SUB_CHANNEL, CHANNEL_ID, PORT
+from config import API_HASH, API_ID, LOGGER, BOT_TOKEN, TG_BOT_WORKERS, CHANNEL_ID, PORT
 import pyrogram.utils
 
 pyrogram.utils.MIN_CHANNEL_ID = -1002301125729
 
+# Function to read the FORCE_SUB_CHANNEL from an external file
+def get_force_sub_channel():
+    try:
+        with open("settings.txt", "r") as f:
+            force_sub_channel = f.read().strip()
+            return force_sub_channel
+    except Exception as e:
+        LOGGER(__name__).error(f"Error reading settings file: {e}")
+        return None
 
+# Function to update the FORCE_SUB_CHANNEL in the settings file
+def update_force_sub_channel(new_channel):
+    try:
+        with open("settings.txt", "w") as f:
+            f.write(new_channel)
+        LOGGER(__name__).info(f"FORCE_SUB_CHANNEL updated to: {new_channel}")
+    except Exception as e:
+        LOGGER(__name__).error(f"Error updating settings file: {e}")
 
 class Bot(Client):
     def __init__(self):
@@ -29,6 +46,8 @@ class Bot(Client):
         usr_bot_me = await self.get_me()
         self.uptime = datetime.now()
 
+        # Fetch FORCE_SUB_CHANNEL dynamically
+        FORCE_SUB_CHANNEL = get_force_sub_channel()
         if FORCE_SUB_CHANNEL:
             try:
                 link = (await self.get_chat(FORCE_SUB_CHANNEL)).invite_link
@@ -58,6 +77,7 @@ class Bot(Client):
         self.LOGGER(__name__).info(f"Bot Running...!\n\nCreated By \nhttps://t.me/+3f3yZz-wSE40Yjg1")
         self.LOGGER(__name__).info(f"""ミ💖 Anime Library N4 💖彡""")
         self.username = usr_bot_me.username
+        
         #web-response
         app = web.AppRunner(await web_server())
         await app.setup()
@@ -67,14 +87,8 @@ class Bot(Client):
     async def stop(self, *args):
         await super().stop()
         self.LOGGER(__name__).info("Bot Stopped...")
-            
 
-
-
-
-
-# Jishu Developer 
-# Don't Remove Credit 🥺
-# Telegram Channel @Madflix_Bots
-# Backup Channel @JishuBotz
-# Developer @JishuDeveloper
+    async def change_force_sub_channel(self, new_channel):
+        update_force_sub_channel(new_channel)
+        self.LOGGER(__name__).info(f"Force Sub Channel changed to {new_channel}")
+        await self.send_message(chat_id=self.db_channel.id, text=f"Force Sub Channel has been updated to {new_channel}")
