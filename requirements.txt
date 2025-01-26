@@ -9,3 +9,4 @@ humanize
 Flask==2.1.1
 python-dotenv==0.21.0
 Werkzeug==2.0.3
+cd /path/to/your/project
