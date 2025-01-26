@@ -1,7 +1,12 @@
 import os
 import logging
 from logging.handlers import RotatingFileHandler
+from config import fetch_force_sub_channels
 
+
+# On bot start
+async def on_start():
+    await fetch_force_sub_channels()  # Fetch the channels from DB and initialize FORCE_SUB_CHANNELS
 
 
 
@@ -16,8 +21,41 @@ DB_NAME = os.environ.get("DB_NAME", "n4animeedit")
 
 
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002263636517"))
-FORCE_SUB_CHANNEL = int(os.environ.get("FORCE_SUB_CHANNEL", "-1001954599807"))
 
+from pyrogram import Client, filters
+from config import ADMINS
+from database import add_force_sub_channel, del_force_sub_channel, get_force_sub_channels
+
+@app.on_message(filters.command("addchannel") & filters.user(ADMINS))  # Only admins can add channels
+async def add_channel(client, message):
+    try:
+        new_channel = message.text.split()[1]  # Extract the new channel ID
+        await add_force_sub_channel(new_channel)  # Add the channel to the database
+        await message.reply(f"New Force Sub Channel {new_channel} has been added!")
+    except IndexError:
+        await message.reply("Please provide the channel ID to add.")
+    except Exception as e:
+        await message.reply(f"Error: {str(e)}")
+
+@app.on_message(filters.command("delchannel") & filters.user(ADMINS))  # Only admins can remove channels
+async def del_channel(client, message):
+    try:
+        channel_to_remove = message.text.split()[1]  # Extract the channel ID
+        await del_force_sub_channel(channel_to_remove)  # Remove the channel from the database
+        await message.reply(f"Force Sub Channel {channel_to_remove} has been removed!")
+    except IndexError:
+        await message.reply("Please provide the channel ID to remove.")
+    except Exception as e:
+        await message.reply(f"Error: {str(e)}")
+
+@app.on_message(filters.command("listchannels") & filters.user(ADMINS))  # Only admins can list channels
+async def list_channels(client, message):
+    channels = await get_force_sub_channels()  # Get all channels from the database
+    if channels:
+        channels_list = "\n".join(channels)
+        await message.reply(f"Current Force Sub Channels:\n{channels_list}")
+    else:
+        await message.reply("No Force Sub Channels found.")
 
 FILE_AUTO_DELETE = int(os.getenv("FILE_AUTO_DELETE", "600")) # auto delete in minute
 
