@@ -1,4 +1,3 @@
-from bot import Bot
 import asyncio
 from config import initialize_force_sub_channels
 from bot import Bot  # Assuming your Bot class is in bot.py
