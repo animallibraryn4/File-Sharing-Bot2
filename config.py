@@ -13,12 +13,8 @@ DB_NAME = os.environ.get("DB_NAME", "n4animeedit")
 
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002263636517"))
 
-FORCE_SUB_CHANNELS = []  # Initialize an empty list for channels
-
-# Fetch the force sub channels when the bot starts
-async def initialize_force_sub_channels():
-    global FORCE_SUB_CHANNELS
-    FORCE_SUB_CHANNELS = await fetch_force_sub_channels()  # Update FORCE_SUB_CHANNELS
+# config.py
+FORCE_SUB_CHANNELS = ["@channel1", "@channel2", "@channel3"]
 
 PORT = os.environ.get("PORT", "8080")
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
