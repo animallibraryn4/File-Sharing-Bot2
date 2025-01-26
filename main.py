@@ -17,3 +17,13 @@ initialize_force_sub_channels()
 
 # Example usage
 print("Current FORCE_SUB_CHANNELS:", fetch_force_sub_channels())
+
+import time
+
+def main():
+    print("Application is running...")
+    while True:
+        time.sleep(10)  # Keeps the app running
+
+if __name__ == "__main__":
+    main()
