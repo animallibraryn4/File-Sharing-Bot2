@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 import os
 
 required_env_vars = ["BOT_TOKEN", "API_ID", "API_HASH", "OWNER_ID", "DB_URL", "DB_NAME", "CHANNEL_ID"]
