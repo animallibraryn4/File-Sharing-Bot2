@@ -65,7 +65,7 @@ class Bot(Client):
         try:
             db_channel = await self.get_chat(CHANNEL_ID)
             self.db_channel = db_channel
-            test = await self.send_message(chat_id = db_channel.id, text = "Hey 🖐")
+            test = await self.send_message(chat_id=db_channel.id, text="Hey 🖐")
             await test.delete()
         except Exception as e:
             self.LOGGER(__name__).warning(e)
@@ -92,3 +92,15 @@ class Bot(Client):
         update_force_sub_channel(new_channel)
         self.LOGGER(__name__).info(f"Force Sub Channel changed to {new_channel}")
         await self.send_message(chat_id=self.db_channel.id, text=f"Force Sub Channel has been updated to {new_channel}")
+
+    async def handle_web_request(self, request):
+        """Web request handler to update FORCE_SUB_CHANNEL"""
+        try:
+            new_channel = request.query.get("channel")
+            if new_channel:
+                await self.change_force_sub_channel(new_channel)
+                return web.Response(text=f"Force Sub Channel has been updated to: {new_channel}")
+            else:
+                return web.Response(text="Please provide the 'channel' parameter.")
+        except Exception as e:
+            return web.Response(text=f"Error: {str(e)}")
